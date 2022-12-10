@@ -1,0 +1,27 @@
+version: "3"
+services:
+  university-mongo-swarm:
+    image: mongo:4.0.8
+    container_name: university-mongo-swarm
+    restart: always # unless-stopped
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+      MONGODB_DATA_DIR: ${MONGODB_DATA_DIR}
+      MONDODB_LOG_DIR: ${MONDODB_LOG_DIR}
+    ports:
+      - "27017:27017"
+  university-web-swarm:
+    image: 127.0.0.1:10000/test_swarm-app
+    build: .
+    ports:
+      - "8000:5000"
+    volumes:
+      - ./app:/app
+    environment:
+      FLASK_ENV: development
+    deploy:
+      mode: replicated
+      replicas: 4
